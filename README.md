@@ -9,10 +9,13 @@ To install locally, type the following into terminal:
 
 ```
 git clone https://github.com/adcostanza/Broken-Link-Builder
-virtualenv env
+virtualenv -p python3 env
 source ./env/bin/activate
 pip install -r requirements.txt
 ```
+
+### Python3 and Type Annotations
+Yes, I use Python 3.5+ and [Type Annotations](https://docs.python.org/3/library/typing.html). Running this with Python <3.5 will not work.
 
 ## Example usage
 As seen in `Example.py`:
