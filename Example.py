@@ -1,13 +1,16 @@
 from Crawler import Crawler
 
 ignore = ['#','mailto','tag']
-c = Crawler("acostanza.com", ignore)
-urls = c.getLinksFromURL("http://www.acostanza.com")
-for url in urls:
-    print(url)
+c = Crawler("www.gov.br", ignore)
+urls = c.getLinksFromURL("https://www.gov.br/")
+# for url in urls:
+#     print(url)
 
-more_urls = c.getLinksFromURLs(c.filterInternalURLs(c.rebaseURLs(urls)))
+rebasedURLS = c.rebaseURLs(urls)
+filteredInternalURLS = c.filterInternalURLs(rebasedURLS)
+more_urls = c.getLinksFromURLs(filteredInternalURLS)
 
+print (more_urls)
 all_links = list(set(urls + more_urls))
 for link in all_links:
     print(link)

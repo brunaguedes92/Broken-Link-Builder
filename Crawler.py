@@ -14,7 +14,7 @@ class Crawler:
         self.ignoreList = ignoreList
         self.visitedLinks = []
 
-    def getURL(self, url: str) -> str:
+    def getHTMLFromURL(self, url: str) -> str:
         """
         Retrieve HTML from url that belongs to self.domain
         """
@@ -46,17 +46,22 @@ class Crawler:
         """
         try:
             soup = BeautifulSoup(html, "html.parser")
-            hrefs = [a['href'] for a in soup.find_all('a')]
+            hrefs = []
+            for a in soup.find_all('a'):
+                if 'href' in a.attrs:
+                    hrefs.append(a.attrs['href'])
+            # hrefs = [a['href'] for a in soup.find_all('a') if 'href' in a]
             return list(set(self.ignore(hrefs)))
-        except:
-            print(soup.find_all('a'))
+        except Exception as e:
+            print(e)
+            #print(soup.find_all('a'))
             return []
 
     def getLinksFromURL(self, url: str) -> List[str]:
         """
         Returns list of links from a single URL by chaining methods
         """
-        html = self.getURL(url)
+        html = self.getHTMLFromURL(url)
         links = self.getLinksFromHTML(html)
         return links
 
@@ -98,6 +103,13 @@ class Crawler:
         Links such as index.php?home will have the domain name added to the front.
         Links that start with / or // will be updated to also have the internal domian.
         """
+        result = []
+        for url in urls:
+            if (url.startswith("/") or url.startswith("#")) and not url.startswith("//"):
+                result.append("https://"+self.domain+url)
+            else:
+                result.append(url)
+
         new_urls = map(lambda url: "http://"+self.domain+url if (url.startswith("/") or url.startswith("#")) and not url.startswith("//") else url, urls)
         new_urls1 = map(lambda url: "http://"+self.domain+url if not(url.startswith("http://") or url.startswith("https://")) else url, new_urls)
         new_urls2 = map(lambda url: url.replace("//", "http://") if url.startswith("//") else url, new_urls1)
