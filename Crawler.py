@@ -54,7 +54,7 @@ class Crawler:
                     hrefs.append(a.attrs['href'])
             return list(set(self.ignore(hrefs)))
         except:
-            print(soup.find_all('a'))
+            print("html none")
             return []
 
     def getLinksFromURL(self, url: str) -> List[str]:
@@ -110,10 +110,10 @@ class Crawler:
         #     else:
         #         result.append(url)
 
-        new_urls = map(lambda url: "http://"+self.domain+url if (url.startswith("/") or url.startswith("#")) and not url.startswith("//") else url, urls)
-        new_urls1 = map(lambda url: "http://"+self.domain+"/"+url if not(url.startswith("http://") or url.startswith("https://")) else url, new_urls)
+        new_urls = map(lambda url: "https://"+self.domain+url if (url.startswith("/") or url.startswith("#")) and not url.startswith("//") else url, urls)
+        new_urls1 = map(lambda url: "https://"+self.domain+"/"+url if not(url.startswith("http://") or url.startswith("https://")) else url, new_urls)
         new_urls2 = map(lambda url: url.replace("//", "http://") if url.startswith("//") else url, new_urls1)
-        real_new_urls = map(lambda url: "http://"+url if not url.startswith("http://") and not url.startswith("https://") and "." not in url else url, new_urls2)
+        real_new_urls = map(lambda url: "https://"+url if not url.startswith("http://") and not url.startswith("https://") and "." not in url else url, new_urls2)
         return list(set(real_new_urls))
 
     def getStatusOfURL(self, url: str) -> int:
@@ -125,6 +125,9 @@ class Crawler:
             status_code: int = response.status_code
             print(url, status_code)
             return status_code
+        except requests.exceptions.SSLError:
+            print(url, status_code)
+            return 403
         except requests.exceptions.Timeout:
             return 504
 
