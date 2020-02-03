@@ -1,20 +1,17 @@
 from Crawler import Crawler
 
-ignore = ['#','mailto','tag']
-c = Crawler("www.gov.br", ignore)
-urls = c.getLinksFromURL("https://www.gov.br/")
-# for url in urls:
-#     print(url)
+import os
+
+ignore = ['#','mailto','tag','itmss://']
+c = Crawler(os.environ.get('DOMAIN'), ignore)
+urls = c.getLinksFromURL(os.environ.get('URL'))
 
 rebasedURLS = c.rebaseURLs(urls)
 filteredInternalURLS = c.filterInternalURLs(rebasedURLS)
 more_urls = c.getLinksFromURLs(filteredInternalURLS)
 
-print (more_urls)
-all_links = list(set(urls + more_urls))
-for link in all_links:
-    print(link)
+all_links = c.rebaseURLs(list(set(urls + more_urls)))
 
-url_status_tuple = c.getStatusOfURLs(c.rebaseURLs(all_links))
+url_status_tuple = c.getStatusOfURLs(all_links)
 errors = [x for x in url_status_tuple if not x[1] == 200]
 print(errors)
