@@ -20,13 +20,16 @@ class Crawler:
         """
         try:
             if self.domain not in url:
-                raise Exception("Cannot get links for external URL", url)
+                # raise Exception("Cannot get links for external URL", url)
+                print(("Cannot get links for external URL", url))
+                pass
             response = self.s.get(url, timeout=2)
             status_code: int = response.status_code
             self.visitedLinks.append(url)
 
             if not status_code == 200:
-                raise Exception("Status code", status_code, url)
+                print("Cannot retrieve HTML from urlStatus code", status_code, url)
+                # raise Exception("Status code", status_code, url)
 
             html: str = response.text
 
@@ -126,13 +129,16 @@ class Crawler:
             print(url, status_code)
             return status_code
         except requests.exceptions.SSLError:
-            print(url, status_code)
             return 403
         except requests.exceptions.Timeout:
             return 504
+        except requests.exceptions.ConnectionError:
+            return 0
+
 
     def getStatusOfURLs(self, urls: List[str]) -> List[Tuple[str, int]]:
         """
         Given a list of URLs, get the status of each URL and return in a List of Tuples of statuses and urls
         """
+
         return [(url, self.getStatusOfURL(url)) for url in urls]
